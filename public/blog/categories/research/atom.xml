@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: research | Autonomous Networks Research Group]]></title>
+  <link href="http://mindisblown.com/blog/categories/research/atom.xml" rel="self"/>
+  <link href="http://mindisblown.com/"/>
+  <updated>2012-08-05T16:06:46-04:00</updated>
+  <id>http://mindisblown.com/</id>
+  <author>
+    <name><![CDATA[Maheswaran Sathiamoorthy]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dummies Guide to Erasure Coding]]></title>
+    <link href="http://mindisblown.com/blog/2012/07/01/dummies-guide-to-erasure-coding/"/>
+    <updated>2012-07-01T20:03:00-04:00</updated>
+    <id>http://mindisblown.com/blog/2012/07/01/dummies-guide-to-erasure-coding</id>
+    <content type="html"><![CDATA[<p>If you read <a href="http://en.wikipedia.org/wiki/Erasure_code">this Wikipedia article on erasure coding</a>, you will be more prone to a headache than a person with migraine. Fortunately, there is help. Unfortunately, this article will be from the perspective of storage and not communication. This article is by no means rigorous, but should act as a 'dummies guide' and get you started. For example, if you are working on Hadoop and if you hear about people talking about erasure codes for Hadoop, this article will get you started.</p>
+
+<!-- more -->
+
+
+<p>To begin with we will deal with what are called MDS codes. MDS stands for maximum distance separable. An MDS erasure code is generally represented as (n, k).</p>
+
+<p>The basic premise of erasure coding goes as follows:</p>
+
+<blockquote><p>Take a file and split into k pieces and <em>code</em> into n pieces. Now, any k pieces can be used to get back the file.</p></blockquote>
+
+<p>So here is the recipe:</p>
+
+<ul>
+<li>Take a file of size <em>M</em>.</li>
+<li>Split the file into <em>k</em> chunks, each of the same size <em>M/k</em>.</li>
+<li>Now, apply the <em>(n, k)</em> code on these k chunks to get n chunks, each of the same size <em>M/k</em>.</li>
+<li>Now the effective size is <em>nM/k</em>. Thus the file is expanded <em>n/k</em> times. We need <em>n</em> to be greater than or equal to <em>k</em>, so <em>n/k</em> is at least 1. If <em>n</em> equals <em>k</em>, you have just split the file and there is no coding performed.</li>
+<li>Any <em>k</em> chunks out of the <em>n</em> chunks can be used to get back the file.</li>
+</ul>
+
+
+<p>So this also means that the code can tolerate upto <em>(n - k)</em> erasures.
+The following figure shows this recipe being followed for a (4, 2) code.</p>
+
+<p><img src="http://photos.smahesh.com/photos/i-CKfxFLT/0/S/i-CKfxFLT-S.png" alt="(4, 2) erasure code" /></p>
+
+<p>Without really wondering how do actually add files, the following example illustrates one particular case of designing a (4, 2) code.</p>
+
+<p><img src="http://photos.smahesh.com/photos/i-qMZPMh2/0/S/i-qMZPMh2-S.png" alt="Simple example of a (4,2) code" /></p>
+
+<p>Erasure codes were first designed to assist in detecting and correcting “problems” when sending data (through an unreliable channel). One of the famous examples of erasure codes are Reed Solomon codes. While erasure codes are also called as error correcting codes, there is a crucial difference between an error and an erasure. If I send ten bits and one bit flipped, an <em>error</em> has occurred, and I do not know where it has occurred. However, if I store ten blocks of a file into different nodes and one node dies, I know exactly which block I lost, and so I know where the <em>erasure</em> has happened. See the difference?</p>
+
+<p>So thats all you need to know about erasure coding if you want to get started. Hopefully in a separate post, I will introduce other tools such as <a href="http://web.eecs.utk.edu/~plank/plank/papers/CS-08-627.html">Jerasure</a>, which can be used to implement erasure codes.</p>
+
+<p>Before signing off, let me now make a case for why it is a great idea to store files as coded blocks instead of complete files in a distributed storage system such as Hadoop.</p>
+
+<p>Lets say you have four computers (aka nodes) that you can use to store files. May be you are running Hadoop over these four nodes. Lets say that you have a file A that is two Hadoop-blocks in size. Clearly, instead of putting all the eggs in the same basket, you will want to spread it out and in this case, store the file twice by doing something like this:</p>
+
+<p><img src="http://photos.smahesh.com/photos/i-xGXGQcN/0/M/i-xGXGQcN-M.png" alt="Uncoded storage" /></p>
+
+<p>where X1 is the first block of file A and X2 the second. Another way is to store the coded blocks:</p>
+
+<p><img src="http://photos.smahesh.com/photos/i-cVW45Bz/0/M/i-cVW45Bz-M.png" alt="Coded Storage" /></p>
+
+<p>Now if you lose nodes 1 and 3, in the case when you store uncoded blocks, X1 is lost permanently, so the file A gets corrupted. Whereas in the case when you store coded blocks, even when those two nodes fail, it is possible to recover X1 and X2 and thus A from A2 and A4. This is because A2 = X2 and A4 = X1 + 2*X2. So one can solve these equations and get back X1 and X2! Neat, isn't it? One can now extend this to a more generic setting consisting of thousands of computers and may be millions of files (what better name to call other than a 'data center'?) and see that using erasure codes will help immensely. There are more nuances of the problem that I will not undertake here, and there is something called a repair problem, and if interested, please take a look at <a href="http://www-bcf.usc.edu/~dimakis/">Prof. Alex Dimakis's work</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Reinforcement Learning]]></title>
+    <link href="http://mindisblown.com/blog/2012/06/30/reinforcement-learning/"/>
+    <updated>2012-06-30T16:23:00-04:00</updated>
+    <id>http://mindisblown.com/blog/2012/06/30/reinforcement-learning</id>
+    <content type="html"><![CDATA[<p>Even though I have used Markov Decision Processes and I know of the bandit problem framework, suddenly I realized that I could not relate these together with reinforcement learning. That meant that there was reading and learning in order. After spending some time on the wiki page and going nowhere, I turned to <a href="http://www.nbu.bg/cogs/events/2000/Readings/Petrov/rltutorial.pdf">this good tutorial</a>; and I decided to post what I learnt. The author has given a few good examples, but I wanted to formulate my own so that I can paint a better picture of reinforcement learning and where MDPs and bandit problems fit in the puzzle.</p>
+
+<!-- more -->
+
+
+<h2>Supervised Learning</h2>
+
+<p>Consider a child, to whom you want to teach what is a bicycle using a set of images some of which contain bicycles and some do not. You start showing the child (toddler really) the pictures and tell her whether each image contains a bicycle or not. Eventually the child will learn to identify a bicycle because of your <em>supervision</em>. You have just completed supervised learning, and you could try to do something similar to a computer.</p>
+
+<h2>Reinforcement Learning</h2>
+
+<p>Now suppose you want to teach the child (she is much older now) how to ride a bicycle. One brutal approach is to put her on a bicycle and let her go on her own while merely tell her that she can either turn the handle bar to the left or to the right, or to shift her body to either side to prevent falling. She may fall a few times and recognize what to do and what not to do, and eventually after a few bruises would have learnt how to ride the bicycle. This is an example of <em>reinforcement learning</em>. For more understanding, read the following example from <a href="http://www.nbu.bg/cogs/events/2000/Readings/Petrov/rltutorial.pdf">the tutorial</a>:</p>
+
+<blockquote><p>To provide the intuition behind reinforcement learning consider the problem of learning to ride a bicycle.
+The goal given to the RL system is simply to ride the bicycle without falling over. In the first trial, the RL
+system begins riding the bicycle and performs a series of actions that result in the bicycle being tilted 45
+degrees to the right. At this point their are two actions possible: turn the handle bars left or turn them right.
+The RL system turns the handle bars to the left and immediately crashes to the ground, thus receiving a
+negative reinforcement. The RL system has just learned not to turn the handle bars left when tilted 45
+degrees to the right. In the next trial the RL system performs a series of actions that again result in the
+bicycle being tilted 45 degrees to the right. The RL system knows not to turn the handle bars to the left, so it
+performs the only other possible action: turn right. It immediately crashes to the ground, again receiving a
+strong negative reinforcement. At this point the RL system has not only learned that turning the handle bars
+right or left when tilted 45 degrees to the right is bad, but that the "state" of being titled 45 degrees to the
+right is bad. Again, the RL system begins another trial and performs a series of actions that result in the
+bicycle being tilted 40 degrees to the right. Two actions are possible: turn right or turn left. The RL system
+turns the handle bars left which results in the bicycle being tilted 45 degrees to the right, and ultimately
+results in a strong negative reinforcement. The RL system has just learned not to turn the handle bars to the
+left when titled 40 degrees to the right. By performing enough of these trial-and-error interactions with the
+environment, the RL system will ultimately learn how to prevent the bicycle from ever falling over.</p></blockquote>
+
+<p>So as you can see here, in supervised learning, explicit input is provided whereas this is not the case with reinforcement learning and is a lot harder. Generally, a set of possible actions are specified and a notion of reward (reinforcement) is defined, and the goal is to maximize the cumulative reward by carefully choosing the actions. Falling down gets the child negative reward and probably being able to bike longer gets her positive reward. In a way, there is some input given to reinforcement learning and so it can be considered as a superset of supervised learning.</p>
+
+<h2>Unsupervised Learning</h2>
+
+<p>In case you are wondering whether learning the bicycle is an example of <em>unsupervised learning</em>, it is not. The goal of unsupervised learning is to find hidden patterns and structures in unlabeled data. Example: I give you four numbers {-101, -100, 100, 101}, can you find groups in this data? I am sure your first answer is to find two groups, the set of negative numbers and that of the positive ones. It was easy for you, but how does a computer do it? This is where unsupervised learning comes into pictures. Some of the tools that may be used for unsupervised learning are:</p>
+
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/K-means">k-means</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Factor_analysis">Factor analysis</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Mixture_models">Mixture models</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Principal_component_analysis">Principal Component Analysis</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Independent_component_analysis">Independent Component Analysis</a></li>
+</ul>
+
+
+<p>If you let the child look at the photos may be she will be able to identify that there is a particular object (the bicycle) in a few photos.</p>
+
+<p>Here is an excellent lecture by Andrew Ng of Stanford on reinforcement learning:</p>
+
+<iframe width="420" height="315" src="http://www.youtube.com/embed/RtxI449ZjSc" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Some of the other examples that Andew Ng states for reinforcement learning:</p>
+
+<ul>
+<li>Training a dog by saying <code>good dog</code> and <code>bad dog</code>.</li>
+<li>Training a computer to play chess by assigning positive reward for winning and negative for losing. After many games, the hope is to get the computer win more often.</li>
+<li>Training a helicopter by assigning positive reward to fly and negative reward if it crashes.</li>
+</ul>
+
+
+<h2>MDPs &amp; Bandits</h2>
+
+<p>One way of attacking a reinforcement learning problem is to take random actions at each point of time, completely ignoring the rewards. But in most cases, that is not going to take you anywhere. So in most cases, reinforcement learning problems are formulated as Markov Decision Processes (MDPs). I will talk about it in a bit more detail in a different post.</p>
+
+<p>Also, it turns out that the multi-armed bandit problem (again, it will be a separate post) is just a one state MDP where the actions correspond to the arms. The goal is to maximize the expected reward (or minimize the regret) while at each step picking one of the arms.</p>
+
+<p>So there you go, I have tried to put together reinforcement learning, MDPs and bandit problems into the same context. If you find anything missing or have any other suggestions, please drop a comment!</p>
+]]></content>
+  </entry>
+  
+</feed>
